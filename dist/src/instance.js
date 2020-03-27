@@ -10,7 +10,7 @@ const messagesExpire_1 = require("./services/messagesExpire");
 const webSocketServer_1 = require("./services/webSocketServer");
 const messageHandler_1 = require("./messageHandler");
 const api_1 = require("./api");
-exports.createInstance = ({ app, server, options }) => {
+exports.createInstance = ({ app, options }) => {
     const config = options;
     const realm = new realm_1.Realm();
     const messageHandler = new messageHandler_1.MessageHandler(realm);
@@ -27,7 +27,7 @@ exports.createInstance = ({ app, server, options }) => {
     //use mountpath for WS server
     const customConfig = Object.assign(Object.assign({}, config), { path: path_1.default.join(app.path(), options.path, '/') });
     const wss = new webSocketServer_1.WebSocketServer({
-        server,
+        app,
         realm,
         config: customConfig
     });

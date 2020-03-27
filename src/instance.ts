@@ -1,5 +1,4 @@
 import express from "express";
-import { Server } from "net";
 import path from 'path';
 import { IClient } from "./models/client";
 import { IMessage } from "./models/message";
@@ -12,9 +11,8 @@ import { MessageHandler } from "./messageHandler";
 import { Api } from "./api";
 import { IConfig } from "./config";
 
-export const createInstance = ({ app, server, options }: {
+export const createInstance = ({ app, options }: {
   app: express.Application,
-  server: Server,
   options: IConfig;
 }): void => {
   const config = options;
@@ -37,7 +35,7 @@ export const createInstance = ({ app, server, options }: {
   const customConfig = { ...config, path: path.join(app.path(), options.path, '/') };
 
   const wss: IWebSocketServer = new WebSocketServer({
-    server,
+    app,
     realm,
     config: customConfig
   });

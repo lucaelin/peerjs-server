@@ -6,26 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
 const https_1 = __importDefault(require("https"));
+const express_ws_1 = __importDefault(require("express-ws"));
 const config_1 = __importDefault(require("./config"));
 const instance_1 = require("./instance");
-function ExpressPeerServer(server, options) {
-    const app = express_1.default();
+function ExpressPeerServer(app, options) {
     const newOptions = Object.assign(Object.assign({}, config_1.default), options);
     if (newOptions.proxied) {
         app.set("trust proxy", newOptions.proxied === "false" ? false : !!newOptions.proxied);
     }
-    app.on("mount", () => {
-        if (!server) {
-            throw new Error("Server is not passed to constructor - " +
-                "can't start PeerServer");
-        }
-        instance_1.createInstance({ app, server, options: newOptions });
-    });
+    instance_1.createInstance({ app, options: newOptions });
     return app;
 }
 exports.ExpressPeerServer = ExpressPeerServer;
 function PeerServer(options = {}, callback) {
     const app = express_1.default();
+    express_ws_1.default(app);
     const newOptions = Object.assign(Object.assign({}, config_1.default), options);
     const port = newOptions.port;
     let server;
@@ -37,7 +32,7 @@ function PeerServer(options = {}, callback) {
     else {
         server = http_1.default.createServer(app);
     }
-    const peerjs = ExpressPeerServer(server, newOptions);
+    const peerjs = ExpressPeerServer(app, newOptions);
     app.use(peerjs);
     server.listen(port, () => callback === null || callback === void 0 ? void 0 : callback(server));
     return peerjs;

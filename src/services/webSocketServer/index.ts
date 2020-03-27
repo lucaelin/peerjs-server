@@ -7,6 +7,7 @@ import { Errors, MessageType } from "../../enums";
 import { Client, IClient } from "../../models/client";
 import { IRealm } from "../../models/realm";
 import { MyWebSocket } from "./webSocket";
+import { Application } from "express";
 
 export interface IWebSocketServer extends EventEmitter {
   readonly path: string;
@@ -27,9 +28,8 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
   public readonly path: string;
   private readonly realm: IRealm;
   private readonly config: CustomConfig;
-  public readonly socketServer: WebSocketLib.Server;
 
-  constructor({ server, realm, config }: { server: any, realm: IRealm, config: CustomConfig; }) {
+  constructor({ app, realm, config }: { app: Application, realm: IRealm, config: CustomConfig; }) {
     super();
 
     this.setMaxListeners(0);
@@ -40,10 +40,10 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     const path = this.config.path;
     this.path = `${path}${path.endsWith('/') ? "" : "/"}${WS_PATH}`;
 
-    this.socketServer = new WebSocketLib.Server({ path: this.path, server });
-
-    this.socketServer.on("connection", (socket: MyWebSocket, req) => this._onSocketConnection(socket, req));
-    this.socketServer.on("error", (error: Error) => this._onSocketError(error));
+    (app as any).ws(this.path, (socket: MyWebSocket, req: any) => {
+      this._onSocketConnection(socket, req);
+      socket.on('error', (error: Error) => this._onSocketError(error) )
+    });
   }
 
   private _onSocketConnection(socket: MyWebSocket, req: IncomingMessage): void {

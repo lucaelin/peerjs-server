@@ -23,6 +23,7 @@
     "clean": "rimraf ./dist",
     "lint": "eslint --ext .js,.ts .",
     "tsc": "tsc",
+    "tsc-watch": "tsc -w",
     "prebuild": "npm run lint",
     "test": "npm run lint && mocha -r ts-node/register \"test/**/*\"",
     "start": "bin/peerjs --port ${PORT:=9000}",
@@ -39,12 +40,14 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-ws": "^4.0.0",
     "optimist": "^0.6.1",
     "uuid": "^3.4.0",
     "ws": "^7.2.3"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/express-ws": "^3.0.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^10.17.17",
     "@types/uuid": "^3.4.8",
