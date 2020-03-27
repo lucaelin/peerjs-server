@@ -14,6 +14,9 @@ function ExpressPeerServer(app, options) {
     if (newOptions.proxied) {
         app.set("trust proxy", newOptions.proxied === "false" ? false : !!newOptions.proxied);
     }
+    if (!app.ws) {
+        express_ws_1.default(app);
+    }
     instance_1.createInstance({ app, options: newOptions });
     return app;
 }
